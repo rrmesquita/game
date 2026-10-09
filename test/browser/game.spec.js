@@ -11,16 +11,17 @@ test('duas pessoas: WebGL, áudio perto/longe, chat, upload, replay e promoção
   const code = await host.locator('#room-code').textContent();
   await guest.locator('#name').fill('Convidado'); await guest.locator('#tab-join').click(); await guest.locator('#code').fill(code);
   await guest.getByRole('button', { name: 'Entrar na avenida' }).click(); await expect(guest.locator('#host-wait')).toBeVisible();
-  await host.locator('#start').click(); await expect(guest.locator('#hud')).toBeVisible(); await expect(host.locator('#online')).toHaveText('2/12');
+  await host.locator('#start').click(); await expect(guest.locator('#hud')).toBeVisible(); await expect(host.locator('#online')).toHaveText('2/30');
   await expect(guest.locator('#volume-value')).toHaveText(/9\d%|100%/, { timeout: 15000 });
   await guest.keyboard.down('KeyW'); await expect(guest.locator('#volume-value')).toHaveText('0%', { timeout: 13000 }); await guest.keyboard.up('KeyW');
   await guest.locator('#mute').click(); await expect(guest.locator('#mute')).toHaveAttribute('aria-pressed', 'true');
   await guest.locator('#chat-input').fill('Bora comboio!'); await guest.locator('#chat-input').press('Enter'); await expect(host.locator('#messages')).toContainText('Bora comboio!');
   await host.locator('#dj summary').click(); await host.locator('#tracks').selectOption('turbo'); await expect(guest.locator('#track-name')).toContainText('Turbo');
+  await host.locator('#tracks').selectOption('segundo-turno'); await expect(guest.locator('#track-name')).toContainText('Segundo turno é 22');
   await host.locator('#upload').setInputFiles({ name: 'Faixa teste.wav', mimeType: 'audio/wav', buffer: wav() });
   await expect(host.locator('#upload-status')).toContainText('Faixa enviada', { timeout: 15000 }); await expect(guest.locator('#track-name')).toHaveText('Faixa teste');
   await host.locator('#replay').click(); await expect(host.locator('#replay-banner')).toBeVisible(); await host.locator('#stop-replay').click();
-  await host.locator('#leave-game').click(); await expect(guest.locator('#dj')).toBeVisible(); await expect(guest.locator('#online')).toHaveText('1/12');
+  await host.locator('#leave-game').click(); await expect(guest.locator('#dj')).toBeVisible(); await expect(guest.locator('#online')).toHaveText('1/30');
   expect(errors).toEqual([]); await context.close();
 });
 test('mobile: lobby responsivo e joystick + nitro', async ({ browser }) => {
@@ -47,12 +48,14 @@ test('MP3 padrão: decodificação, low-pass, ganho suave e estéreo', async ({ 
     const audio = new SpatialAudio(message => { throw new Error(message); }); await audio.unlock();
     const clock = () => Date.now(); await audio.setMusic({ ...TRACKS[0], playing: true, startedAt: Date.now() - 500, offset: 0 }, clock, '');
     const duration = audio.source.buffer.duration;
+    await audio.setMusic({ ...TRACKS.find(t => t.id === 'segundo-turno'), playing: true, startedAt: Date.now() - 500, offset: 0 }, clock, '');
+    const alternativeDuration = audio.source.buffer.duration;
     audio.update({ x: 0, z: 0 }, { x: 0, z: 0 }, clock()); await new Promise(r => setTimeout(r, 350));
     const near = { volume: audio.volume, gain: audio.gain.gain.value, cutoff: audio.filter.frequency.value, pan: audio.panner.pan.value };
     audio.update({ x: 200, z: 0 }, { x: 0, z: 0 }, clock()); await new Promise(r => setTimeout(r, 750));
     const far = { volume: audio.volume, gain: audio.gain.gain.value, cutoff: audio.filter.frequency.value, pan: audio.panner.pan.value };
-    audio.stop(); await audio.ctx.close(); return { near, far, duration };
+    audio.stop(); await audio.ctx.close(); return { near, far, duration, alternativeDuration };
   });
-  expect(result.duration).toBeGreaterThan(60); expect(result.near.volume).toBe(1); expect(result.near.gain).toBeGreaterThan(0.95); expect(result.near.cutoff).toBeGreaterThan(15000);
+  expect(result.duration).toBeGreaterThan(60); expect(result.alternativeDuration).toBeGreaterThan(60); expect(result.near.volume).toBe(1); expect(result.near.gain).toBeGreaterThan(0.95); expect(result.near.cutoff).toBeGreaterThan(15000);
   expect(result.far.volume).toBe(0); expect(result.far.gain).toBeLessThan(0.01); expect(result.far.cutoff).toBeLessThan(1000); expect(result.near.pan).toBe(0); expect(result.far.pan).toBeLessThan(-0.65);
 });

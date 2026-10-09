@@ -1,7 +1,7 @@
 import { GameScene } from './scene.js';
 import { SpatialAudio } from './audio.js';
 import { sampleSnapshots } from './net.js';
-import { COLORS, TRACKS, OBSTACLES, WORLD_SIZE, AUDIO_RADIUS, clamp } from '/shared/world.js';
+import { COLORS, TRACKS, MAX_PLAYERS, OBSTACLES, WORLD_SIZE, AUDIO_RADIUS, clamp } from '/shared/world.js';
 const $ = id => document.getElementById(id), show = (id, visible) => $(id).classList.toggle('hidden', !visible);
 let toastTimer;
 function toast(message) { $('toast').textContent = message; show('toast', true); clearTimeout(toastTimer); toastTimer = setTimeout(() => show('toast', false), 4500); }
@@ -58,7 +58,7 @@ async function refreshRooms() {
     if (!list.length) { const p = document.createElement('p'); p.className = 'muted'; p.textContent = 'A avenida está livre. Seja o primeiro a ligar o som.'; $('public-rooms').append(p); }
     for (const r of list.slice(0, 10)) {
       const button = document.createElement('button'); button.className = 'public-room'; const name = document.createElement('span'); name.textContent = r.name;
-      const info = document.createElement('small'); info.textContent = `${r.players}/12 ${r.started ? '• na rua' : '• lobby'} →`; button.append(name, info);
+      const info = document.createElement('small'); info.textContent = `${r.players}/${MAX_PLAYERS} ${r.started ? '• na rua' : '• lobby'} →`; button.append(name, info);
       button.onclick = () => requestRoom('join', { ...playerData(), code: r.code }); $('public-rooms').append(button);
     }
   } catch { $('public-rooms').textContent = 'Não foi possível carregar as salas.'; }
@@ -78,7 +78,7 @@ function applyRoom(next) {
   $('lobby-title').textContent = room.name; $('room-code').textContent = room.code; $('hud-room').textContent = `${room.name} · ${room.code}`;
   $('lobby-status').textContent = room.public ? 'Sala pública • compartilhe o código e chame a galera.' : 'Sala privada • compartilhe o código com seus amigos.';
   playerList($('lobby-players'), room.players, room.hostId); playerList($('hud-players'), room.players, room.hostId);
-  $('online').textContent = `${room.players.length}/12`; $('player-count').textContent = room.players.length;
+  $('online').textContent = `${room.players.length}/${MAX_PLAYERS}`; $('player-count').textContent = room.players.length;
   show('start', host); show('host-wait', !host); show('dj', host && room.started); show('auto', !host);
   if (room.started && (!previous?.started || JSON.stringify(oldMusic) !== JSON.stringify(room.music))) applyMusic(room.music);
   if (room.started && audio.ctx?.state !== 'running') show('unlock-audio', true);
@@ -87,6 +87,7 @@ socket.on('room', applyRoom);
 $('start').onclick = () => { void unlock(); socket.emit('start'); };
 $('copy-code').onclick = async () => { try { await navigator.clipboard.writeText(room.code); toast('Código copiado!'); } catch { toast(`Código: ${room.code}`); } };
 function resetRoom() {
+  clearTimeout(musicChangeTimer);
   room = null; snapshots = []; history = []; replay = null; displayed = []; livePlayers = []; keys.clear(); touch.throttle = touch.steer = 0; touch.boost = false; mode = 'chase';
   audio.stop(); scene?.reset(); document.body.classList.remove('playing'); show('home', true); show('lobby', false); show('hud', false); show('replay-banner', false);
   $('auto').classList.remove('active'); $('messages').replaceChildren(); $('upload-status').textContent = ''; $('camera').textContent = '◉ Câmera';
@@ -100,7 +101,12 @@ function applyMusic(music) {
   void audio.setMusic(music, serverNow, token);
 }
 socket.on('music', applyMusic);
-$('tracks').onchange = () => socket.emit('musicControl', { id: $('tracks').value });
+let musicChangeTimer;
+$('tracks').onchange = () => {
+  const id = $('tracks').value; clearTimeout(musicChangeTimer);
+  // Preserva a última escolha quando o Host troca rapidamente, respeitando o limite de 300 ms do servidor.
+  musicChangeTimer = setTimeout(() => socket.emit('musicControl', { id }), 350);
+};
 $('play-pause').onclick = () => socket.emit('musicControl', { playing: !room.music.playing });
 $('mute').onclick = () => { audio.muted = !audio.muted; $('mute').textContent = audio.muted ? '×' : '♪'; $('mute').setAttribute('aria-pressed', String(audio.muted)); $('mute').setAttribute('aria-label', audio.muted ? 'Ativar música' : 'Silenciar música'); };
 $('upload').onchange = async () => {

@@ -1,8 +1,8 @@
 # Comboio 22
 
-Mini-jogo 3D multiplayer de navegador: pickups low-poly, cenário brasileiro e um único carro de som comandado pelo Host. Até **12 jogadores por sala**, com servidor autoritativo a **25 Hz**. Three.js + Web Audio + Node.js + Socket.io, sem banco de dados, contas ou serviços pagos.
+Mini-jogo 3D multiplayer de navegador: pickups low-poly, cenário brasileiro e um único carro de som comandado pelo Host. Até **30 jogadores por sala**, com servidor autoritativo a **25 Hz**. Three.js + Web Audio + Node.js + Socket.io, sem banco de dados, contas ou serviços pagos.
 
-A referência visual foi interpretada a partir da descrição do pedido. A faixa principal é o MP3 enviado pelo usuário, “Minha mãe é Bolsonaro, meu pai é Bolsonaro”, em `public/assets/audio/tropa-do-capitao.mp3`. Ela inicia automaticamente quando o Host liga o comboio, com reprodução sincronizada e volume por proximidade. As quatro faixas alternativas são loops originais sintetizados. O Host também pode enviar outro áudio.
+A referência visual foi interpretada a partir da descrição do pedido. A faixa principal é o MP3 enviado pelo usuário, “Minha mãe é Bolsonaro, meu pai é Bolsonaro”, em `public/assets/audio/tropa-do-capitao.mp3`. Ela inicia automaticamente quando o Host liga o comboio, com reprodução sincronizada e volume por proximidade. “Mega Funk Fora PT — Segundo turno é 22”, também enviado pelo usuário, está disponível como segunda opção no seletor. As quatro outras faixas são loops originais sintetizados. O Host também pode enviar outro áudio.
 
 ## Rodar localmente
 
@@ -130,6 +130,7 @@ O upload requer um token aleatório da conexão do Host; o download exige token 
 | Casas, muros, posto, placas, árvores e nuvens | Geometria procedural |
 | Luzes RGB, ondas, poeira e nitro | Geometria/partículas leves |
 | MP3 principal | Arquivo enviado pelo usuário em `public/assets/audio/tropa-do-capitao.mp3` |
+| MP3 alternativo | Arquivo enviado pelo usuário em `public/assets/audio/mega-funk-segundo-turno.mp3` |
 | Quatro loops musicais e buzina | Síntese original em `audio.js` |
 | Tipografia | Fonte do sistema; sem download |
 | Música pessoal | Enviada pelo Host; use uma faixa que possa compartilhar |
@@ -151,7 +152,7 @@ Se houver Chromium instalado, você pode evitar download:
 TEST_BROWSER_PATH=/usr/bin/chromium npm run test:browser
 ```
 
-No ambiente cloud atual, o cache npm pode ser colocado em `/tmp/npm-cache` com `npm_config_cache=/tmp/npm-cache`. O download do Chromium pelo Playwright foi bloqueado pela política de rede; os testes usam `/usr/bin/chromium` já instalado. Os testes de navegador verificam lobby com duas pessoas, volume perto/longe, chat, troca de faixa, upload WAV, replay, migração do Host, joystick, nitro, ausência de overflow mobile e valores reais de GainNode/low-pass. O teste com 12 participantes valida capacidade funcional da sala; não substitui um benchmark de carga de várias salas.
+No ambiente cloud atual, o cache npm pode ser colocado em `/tmp/npm-cache` com `npm_config_cache=/tmp/npm-cache`. O download do Chromium pelo Playwright foi bloqueado pela política de rede; os testes usam `/usr/bin/chromium` já instalado. Os testes de navegador verificam lobby com duas pessoas, volume perto/longe, chat, troca de faixa, upload WAV, replay, migração do Host, joystick, nitro, ausência de overflow mobile e valores reais de GainNode/low-pass. O teste com 30 participantes valida capacidade funcional da sala; não substitui um benchmark de carga de várias salas.
 
 ## Deploy
 

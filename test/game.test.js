@@ -54,15 +54,15 @@ test('sala privada: início pelo Host, snapshots, chat seguro, migração e limp
   const migrated = event(b.s, 'room'); a.s.disconnect(); assert.equal((await migrated).hostId, b.s.id);
   b.s.disconnect(); await wait(80); assert.equal(game.rooms.size, 0);
 });
-test('12 jogadores, autoridade musical, pausa e retomada, entradas inválidas', async t => {
+test('30 jogadores, autoridade musical, pausa e retomada, entradas inválidas', async t => {
   const { game, client } = await fixture(t), host = await client();
   const { room } = await request(host.s, 'create', { name: 'Host' }), code = room.code;
   const guests = [];
-  for (let i = 0; i < 11; i++) { const guest = await client(); assert.ok((await request(guest.s, 'join', { code, name: `P${i}` })).ok); guests.push(guest); }
+  for (let i = 0; i < 29; i++) { const guest = await client(); assert.ok((await request(guest.s, 'join', { code, name: `P${i}` })).ok); guests.push(guest); }
   const extra = await client(); assert.match((await request(extra.s, 'join', { code })).error, /cheia/);
-  const snap = event(host.s, 'snapshot'); host.s.emit('start'); assert.equal((await snap).players.length, 12);
+  const snap = event(host.s, 'snapshot'); host.s.emit('start'); assert.equal((await snap).players.length, 30);
   guests[0].s.emit('musicControl', { id: 'turbo' }); await wait(80); assert.equal(game.rooms.get(code).music.id, 'tropa');
-  const changed = event(guests[0].s, 'music'); host.s.emit('musicControl', { id: 'paredao' }); assert.equal((await changed).id, 'paredao');
+  const changed = event(guests[0].s, 'music'); host.s.emit('musicControl', { id: 'segundo-turno' }); const selected = await changed; assert.equal(selected.id, 'segundo-turno'); assert.equal(selected.url, '/assets/audio/mega-funk-segundo-turno.mp3');
   await wait(350); const paused = event(host.s, 'music'); host.s.emit('musicControl', { playing: false }); assert.equal((await paused).playing, false);
   await wait(350); const resumed = event(host.s, 'music'); host.s.emit('musicControl', { playing: true }); assert.equal((await resumed).playing, true);
   guests[0].s.emit('input', null); host.s.emit('musicControl', null); await wait(80); assert.equal(game.rooms.size, 1);

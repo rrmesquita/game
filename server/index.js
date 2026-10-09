@@ -87,7 +87,7 @@ export function createGameServer() {
       if (limit('joinAt', 500)) return ack({ error: 'Aguarde um instante.' });
       const room = rooms.get(clean(data.code, 6).toUpperCase());
       if (!room) return ack({ error: 'Sala não encontrada.' });
-      if (room.players.size >= MAX_PLAYERS && !room.players.has(socket.id)) return ack({ error: 'Sala cheia (12 jogadores).' });
+      if (room.players.size >= MAX_PLAYERS && !room.players.has(socket.id)) return ack({ error: `Sala cheia (${MAX_PLAYERS} jogadores).` });
       if (socket.data.code === room.code) return ack({ ok: true, room: info(room) });
       leave(socket); join(room, data, ack);
     });

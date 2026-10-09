@@ -1,12 +1,13 @@
 // A mesma geometria é usada pelo servidor para colisões e pelo cliente para desenhar.
 export const WORLD_SIZE = 148;
 export const AUDIO_RADIUS = 95;
-export const MAX_PLAYERS = 12;
+export const MAX_PLAYERS = 30;
 export const TICK_RATE = 25;
 export const COLORS = ['#ffda35', '#36a7ff', '#15c987', '#ff755c', '#b78aff', '#eef3ff'];
 export const TRACKS = [
   // MP3 enviado pelo usuário; BPM estimado apenas para os efeitos visuais.
   { id: 'tropa', name: 'Minha mãe é Bolsonaro, meu pai é Bolsonaro', bpm: 128, url: '/assets/audio/tropa-do-capitao.mp3' },
+  { id: 'segundo-turno', name: 'Mega Funk Fora PT • Segundo turno é 22', bpm: 128, url: '/assets/audio/mega-funk-segundo-turno.mp3' },
   { id: 'avenida', name: 'Avenida • grave de rua', bpm: 128 },
   { id: 'paredao', name: 'Paredão • noite de neon', bpm: 140 },
   { id: 'domingo', name: 'Domingo • comboio solar', bpm: 120 },
