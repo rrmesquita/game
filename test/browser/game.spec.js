@@ -40,7 +40,7 @@ test('mobile: lobby responsivo e joystick + nitro', async ({ browser }) => {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await context.close();
 });
-test('gráfico de áudio: low-pass, ganho suave e loops originais', async ({ page }) => {
+test('MP3 padrão: decodificação, low-pass, ganho suave e estéreo', async ({ page }) => {
   await page.goto('/');
   const result = await page.evaluate(async () => {
     const { SpatialAudio } = await import('/js/audio.js'), { TRACKS } = await import('/shared/world.js');
@@ -53,6 +53,6 @@ test('gráfico de áudio: low-pass, ganho suave e loops originais', async ({ pag
     const far = { volume: audio.volume, gain: audio.gain.gain.value, cutoff: audio.filter.frequency.value, pan: audio.panner.pan.value };
     audio.stop(); await audio.ctx.close(); return { near, far, duration };
   });
-  expect(result.duration).toBeGreaterThan(7); expect(result.near.volume).toBe(1); expect(result.near.gain).toBeGreaterThan(0.95); expect(result.near.cutoff).toBeGreaterThan(15000);
+  expect(result.duration).toBeGreaterThan(60); expect(result.near.volume).toBe(1); expect(result.near.gain).toBeGreaterThan(0.95); expect(result.near.cutoff).toBeGreaterThan(15000);
   expect(result.far.volume).toBe(0); expect(result.far.gain).toBeLessThan(0.01); expect(result.far.cutoff).toBeLessThan(1000); expect(result.near.pan).toBe(0); expect(result.far.pan).toBeLessThan(-0.65);
 });

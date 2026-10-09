@@ -5,6 +5,8 @@ export const MAX_PLAYERS = 12;
 export const TICK_RATE = 25;
 export const COLORS = ['#ffda35', '#36a7ff', '#15c987', '#ff755c', '#b78aff', '#eef3ff'];
 export const TRACKS = [
+  // MP3 enviado pelo usuário; BPM estimado apenas para os efeitos visuais.
+  { id: 'tropa', name: 'Minha mãe é Bolsonaro, meu pai é Bolsonaro', bpm: 128, url: '/assets/audio/tropa-do-capitao.mp3' },
   { id: 'avenida', name: 'Avenida • grave de rua', bpm: 128 },
   { id: 'paredao', name: 'Paredão • noite de neon', bpm: 140 },
   { id: 'domingo', name: 'Domingo • comboio solar', bpm: 120 },

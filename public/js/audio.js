@@ -23,7 +23,7 @@ export class SpatialAudio {
     if (this.buffers.has(key)) return this.buffers.get(key);
     const rate = this.ctx.sampleRate, beat = 60 / track.bpm, duration = beat * 16;
     const buffer = this.ctx.createBuffer(1, Math.round(duration * rate), rate), out = buffer.getChannelData(0);
-    const variant = Math.max(0, TRACKS.findIndex(t => t.id === track.id));
+    const variant = Math.max(0, TRACKS.filter(t => !t.url).findIndex(t => t.id === track.id));
     let seed = 1297 + variant; const noise = () => { seed = (seed * 16807) % 2147483647; return seed / 1073741823.5 - 1; };
     function add(start, len, fn) {
       const offset = Math.round(start * rate), n = Math.round(len * rate);
@@ -49,14 +49,14 @@ export class SpatialAudio {
     if (!this.ctx || !music?.playing) return;
     try {
       let buffer;
-      if (music.id === 'upload') {
+      if (music.url) {
         if (this.buffers.has(music.url)) buffer = this.buffers.get(music.url);
         else {
-          const response = await fetch(music.url, { headers: { 'x-player-token': token } });
+          const response = await fetch(music.url, music.id === 'upload' ? { headers: { 'x-player-token': token } } : {});
           if (!response.ok) throw new Error('O servidor não entregou a faixa.');
           buffer = await this.ctx.decodeAudioData(await response.arrayBuffer());
           if (buffer.duration > 600) throw new Error('A faixa precisa ter até 10 minutos.');
-          // Limite de cache: quatro synths + uma faixa enviada, sem acumular uploads antigos.
+          // Mantém os assets padrão e synths; apenas o último upload fica no cache.
           for (const key of this.buffers.keys()) if (key.startsWith('/api/')) this.buffers.delete(key);
           this.buffers.set(music.url, buffer);
         }

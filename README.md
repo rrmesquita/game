@@ -2,7 +2,7 @@
 
 Mini-jogo 3D multiplayer de navegador: pickups low-poly, cenário brasileiro e um único carro de som comandado pelo Host. Até **12 jogadores por sala**, com servidor autoritativo a **25 Hz**. Three.js + Web Audio + Node.js + Socket.io, sem banco de dados, contas ou serviços pagos.
 
-A referência visual foi interpretada a partir da descrição do pedido. Nenhum vídeo ou áudio comercial acompanha o projeto. As quatro faixas de demonstração são loops originais de batida sintetizada; não são gravações de “Mega Funk segundo turno”. O Host pode enviar áudio próprio.
+A referência visual foi interpretada a partir da descrição do pedido. A faixa principal é o MP3 enviado pelo usuário, “Minha mãe é Bolsonaro, meu pai é Bolsonaro”, em `public/assets/audio/tropa-do-capitao.mp3`. Ela inicia automaticamente quando o Host liga o comboio, com reprodução sincronizada e volume por proximidade. As quatro faixas alternativas são loops originais sintetizados. O Host também pode enviar outro áudio.
 
 ## Rodar localmente
 
@@ -112,6 +112,8 @@ Ganhos e parâmetros usam `setTargetAtTime` com 85–150 ms de suavização, evi
 
 ### Tracks e upload
 
+O MP3 principal é carregado e decodificado no primeiro uso, mantendo o mesmo loop e relógio das outras faixas. O BPM de 128 é uma estimativa apenas para a animação.
+
 Avenida (128 BPM), Paredão (140), Domingo (120) e Turbo (150) são geradas no Web Audio: bumbo, caixa, chimbal e baixo. Têm quatro compassos e não dependem de assets de som.
 
 Na **Mesa do Host**, escolha uma faixa, pause/retome ou envie MP3, WAV ou outro formato que o navegador consiga decodificar. Limites: **12 MB**, até **10 minutos** no validador do cliente, uma faixa por sala e 128 MB somados de uploads no servidor. A duração de dez minutos é validada no cliente; o servidor limita tamanho, autorização e armazenamento, mas não decodifica áudio. O BPM de upload é assumido como 128 apenas para os efeitos visuais. A faixa enviada substitui a anterior e não persiste depois que a sala termina ou o processo reinicia. Cada participante baixa o mesmo arquivo, e navegadores com codecs incompatíveis exibem erro de áudio.
@@ -127,11 +129,12 @@ O upload requer um token aleatório da conexão do Host; o download exige token 
 | Bandeira do Brasil | Canvas + malha animada |
 | Casas, muros, posto, placas, árvores e nuvens | Geometria procedural |
 | Luzes RGB, ondas, poeira e nitro | Geometria/partículas leves |
+| MP3 principal | Arquivo enviado pelo usuário em `public/assets/audio/tropa-do-capitao.mp3` |
 | Quatro loops musicais e buzina | Síntese original em `audio.js` |
 | Tipografia | Fonte do sistema; sem download |
 | Música pessoal | Enviada pelo Host; use uma faixa que possa compartilhar |
 
-Nenhum asset externo é obrigatório. Para adicionar uma faixa sintetizada, inclua metadados em `TRACKS` e seu padrão no sintetizador. Para músicas gravadas permanentes, coloque arquivos que você possa distribuir em `public/assets/`, adapte o carregamento em `setMusic` e mantenha os mesmos timestamps do servidor.
+O MP3 principal está incluído no repositório; não é necessário baixar áudio de serviços externos. Para adicionar uma faixa sintetizada, inclua metadados em `TRACKS` e seu padrão no sintetizador. Para músicas gravadas permanentes, coloque arquivos que você possa distribuir em `public/assets/` e acrescente uma entrada em `TRACKS` com `url` de mesma origem. O carregador mantém os mesmos timestamps do servidor. A primeira entrada de `TRACKS` define a faixa padrão.
 
 ## Testes
 
