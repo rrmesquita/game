@@ -11,7 +11,7 @@ test('duas pessoas: WebGL, áudio perto/longe, chat, upload, replay e promoção
   const code = await host.locator('#room-code').textContent();
   await guest.locator('#name').fill('Convidado'); await guest.locator('#tab-join').click(); await guest.locator('#code').fill(code);
   await guest.getByRole('button', { name: 'Entrar na avenida' }).click(); await expect(guest.locator('#host-wait')).toBeVisible();
-  await host.locator('#start').click(); await expect(guest.locator('#hud')).toBeVisible(); await expect(host.locator('#online')).toHaveText('2/30');
+  await host.locator('#start').click(); await expect(guest.locator('#hud')).toBeVisible(); await expect(host.locator('#online')).toHaveText('2/50');
   await expect(guest.locator('#volume-value')).toHaveText(/9\d%|100%/, { timeout: 15000 });
   await guest.keyboard.down('KeyW'); await expect(guest.locator('#volume-value')).toHaveText('0%', { timeout: 13000 }); await guest.keyboard.up('KeyW');
   await guest.locator('#mute').click(); await expect(guest.locator('#mute')).toHaveAttribute('aria-pressed', 'true');
@@ -21,7 +21,7 @@ test('duas pessoas: WebGL, áudio perto/longe, chat, upload, replay e promoção
   await host.locator('#upload').setInputFiles({ name: 'Faixa teste.wav', mimeType: 'audio/wav', buffer: wav() });
   await expect(host.locator('#upload-status')).toContainText('Faixa enviada', { timeout: 15000 }); await expect(guest.locator('#track-name')).toHaveText('Faixa teste');
   await host.locator('#replay').click(); await expect(host.locator('#replay-banner')).toBeVisible(); await host.locator('#stop-replay').click();
-  await host.locator('#leave-game').click(); await expect(guest.locator('#dj')).toBeVisible(); await expect(guest.locator('#online')).toHaveText('1/30');
+  await host.locator('#leave-game').click(); await expect(guest.locator('#dj')).toBeVisible(); await expect(guest.locator('#online')).toHaveText('1/50');
   expect(errors).toEqual([]); await context.close();
 });
 test('mobile: lobby responsivo e joystick + nitro', async ({ browser }) => {

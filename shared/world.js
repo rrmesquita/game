@@ -1,7 +1,7 @@
 // A mesma geometria é usada pelo servidor para colisões e pelo cliente para desenhar.
 export const WORLD_SIZE = 148;
 export const AUDIO_RADIUS = 95;
-export const MAX_PLAYERS = 30;
+export const MAX_PLAYERS = 50;
 export const TICK_RATE = 25;
 export const COLORS = ['#ffda35', '#36a7ff', '#15c987', '#ff755c', '#b78aff', '#eef3ff'];
 export const TRACKS = [
