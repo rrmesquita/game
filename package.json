@@ -1,0 +1,26 @@
+{
+  "name": "comboio-22",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Comboio multiplayer 3D com áudio sincronizado por proximidade",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node --test test/*.test.js",
+    "test:browser": "playwright test",
+    "check": "node --check server/index.js && node --check public/js/main.js && node --check public/js/audio.js && node --check public/js/scene.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "socket.io": "^4.8.1",
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.0",
+    "socket.io-client": "^4.8.1"
+  }
+}
